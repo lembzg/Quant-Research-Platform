@@ -1,0 +1,27 @@
+# Python artifacts
+__pycache__/
+*.py[cod]
+
+# Env and packages
+venv/
+*.egg-info/
+.env
+
+# Parquet and raw data
+data/
+data-trades/
+*.parquet
+*.zip
+*.log
+
+# AWS/Secrets
+*.pem
+*.key
+*.crt
+*.json
+
+# Jupyter notebooks checkpoints
+.ipynb_checkpoints/
+
+# VSCode settings
+.vscode/
