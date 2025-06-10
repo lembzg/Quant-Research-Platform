@@ -24,4 +24,4 @@ data-trades/
 .ipynb_checkpoints/
 
 # VSCode settings
-.vscode/
+.vscode/apex-env/
