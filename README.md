@@ -19,18 +19,8 @@
 
 ---
 
-## Key Highlights
-
-- **Real-time BTC L2 depth + trades ingestion pipeline** achieving **~10ms median inter-arrival** — capturing order book state faster than most retail and institutional feed handlers
-- **Redundant AWS EC2 collectors** with automatic failover, sustaining **>99.9% uptime** over **14M+ market data updates** in continuous production runs
-- **Deterministic LOB engine** supporting limit matching, partial fills, and full **book replay** with timestamped executions — every match is reproducible
-- **Validated matching correctness** against production exchange data with **fill accuracy within ±1 tick**, ensuring simulation fidelity suitable for live strategy deployment
-
----
-
 ## Table of Contents
 
-- [Key Highlights](#key-highlights)
 - [Overview](#overview)
 - [Why NebulaForgeApex](#why-nebulaforgeapex)
 - [Architecture](#architecture)
