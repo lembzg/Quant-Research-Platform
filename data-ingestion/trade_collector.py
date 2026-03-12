@@ -12,9 +12,9 @@ import gc
 """
 
 BTC L2  Trade Ingestion Pipeline
+Written by Arryl Tham
 
-Event driven by nature, 
-hence we use the TRADES channel to capture real-time trade data.
+Event driven by nature, TRADES channel is used to capture real-time trade data.
 
 """
 
@@ -39,6 +39,7 @@ async def handle_trade(trade, timestamp):
         'price': trade.price,
         'amount': trade.amount
     })
+    
     """
     
     Check if the buffer has reached the defined BUFFER_SIZE. If it has, write the contents of the buffer to a Parquet file. 

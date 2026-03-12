@@ -107,6 +107,14 @@ for row in df_prices.itertuples(index=False):
                     else:
                         print(f'Trade cancelled @ bid_quant {bid_size_prev-bid_size_now}')
 
+            
+            """
+            
+            Same logic applied for ask.
+            
+            """
+            
+            
             ask_size_now = getattr(row, ask_attr)
             ask_size_prev = getattr(prev_row, ask_attr)
             ask_price_now = getattr(row, ask_price_attr)
@@ -129,7 +137,7 @@ for row in df_prices.itertuples(index=False):
                                                          timestamp=row.timestamp,
                                                          quantity=(bid_size_now-bid_size_prev),
                                                          price=bid_price_now,
-                                                         side='sell',
+                                                         side='buy',
                                                          is_self=False))                       
                     else:
                         print(f'Trade cancelled @ ask_quant {ask_size_now-ask_size_prev}')

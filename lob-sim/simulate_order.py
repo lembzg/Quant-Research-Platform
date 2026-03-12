@@ -1,5 +1,11 @@
 from dataclasses import dataclass
 
+"""
+
+Tracks lifecycle of my own orders. 
+Used for backtesting and simulating order execution.
+
+"""
 
 @dataclass
 class SimulatedOrder:
@@ -12,6 +18,8 @@ class SimulatedOrder:
     fills: list
     status: str = "open"
 
+    # Added post init to initialize fills list after object creation.
+    # Python would share the same list across all instances if not.
     def __post_init__(self):
         self.fills = []
 

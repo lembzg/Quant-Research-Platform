@@ -13,6 +13,7 @@ from itertools import islice
 """
 
 BTC L2  Data Ingestion Pipeline
+Written by Arryl Tham
 
 """
 
@@ -113,9 +114,7 @@ async def handle_book(order_book, timestamp):
     Check if the buffer has reached the defined BUFFER_SIZE. If it has, write the contents of the buffer to a Parquet file. 
     The filename includes the batch count, symbol, and a timestamp for easy identification.
     After writing to the file, the buffer is cleared and garbage collection is triggered to free up memory.
-    
-    Await asichronous file writing to avoid blocking the event loop, ensuring that data collection continues smoothly while the file is being written.
-  
+      
     """
 
     if len(buffer) >= BUFFER_SIZE:
@@ -123,6 +122,13 @@ async def handle_book(order_book, timestamp):
         df = pd.DataFrame(buffer)
         t = datetime.datetime.now()
         filename = f"data/{batch_count}_{symbol}_{t.strftime('%d-%m-%y_%H-%M-%S')}.parquet"
+        
+        """
+        
+        Await asichronous file writing to avoid blocking the event loop, ensuring that data collection continues smoothly while the file is being written.
+        
+        """
+        
         await asyncio.to_thread(df.to_parquet, filename, engine='pyarrow', index=False, compression='snappy')
         print(f"batch {batch_count} added to data at {t.strftime('%d-%m-%y_%H-%M-%S')}")        
         batch_count += 1
