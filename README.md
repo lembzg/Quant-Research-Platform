@@ -5,10 +5,6 @@
 ---
 
 <p align="center">
-  <strong>~10ms median inter-arrival | 14M+ updates at 99.9% uptime | Deterministic matching validated to ±1 tick</strong>
-</p>
-
-<p align="center">
   <img src="https://img.shields.io/badge/python-3.10+-blue?style=flat-square" alt="Python 3.10+">
   <img src="https://img.shields.io/badge/cloud-AWS%20EC2-orange?style=flat-square" alt="AWS EC2">
   <img src="https://img.shields.io/badge/exchange-Binance-yellow?style=flat-square" alt="Binance">
@@ -19,14 +15,6 @@
 
 ---
 
-## Key Highlights
-
-- **Real-time BTC L2 depth + trades ingestion pipeline** achieving **~10ms median inter-arrival** capturing order book state faster than most retail and institutional feed handlers
-- **Redundant AWS EC2 collectors** with automatic failover, sustaining **>99.9% uptime** over **14M+ market data updates** in continuous production runs
-- **Deterministic LOB engine** supporting limit matching, partial fills, and full **book replay** with timestamped executions, every match is reproducible
-- **Validated matching correctness** against production exchange data with **fill accuracy within ±1 tick**, ensuring simulation fidelity suitable for live strategy deployment
-
----
 
 ## Table of Contents
 
