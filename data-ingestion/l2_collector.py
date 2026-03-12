@@ -10,11 +10,16 @@ import time
 import gc
 from itertools import islice
 
+"""
+
+BTC L2  Data Ingestion Pipeline
+
+"""
 
 fh = FeedHandler()
 
-BUFFER_SIZE = 1000
-TARGET_INTERVALS_MS = 50
+BUFFER_SIZE = 5000
+TARGET_INTERVALS_MS = 10
 buffer = []
 batch_count = 1
 last_collected = 0
@@ -23,6 +28,13 @@ last_collected = 0
 async def handle_book(order_book, timestamp):
     global buffer, batch_count, last_collected, TARGET_INTERVALS_MS, BUFFER_SIZE
 
+    """
+    
+    Record time of function start for performance monitoring. 
+    Sceduling When to collect data.
+    
+    """
+    
     start = time.perf_counter()
 
     now = int(timestamp * 1000)
@@ -30,19 +42,36 @@ async def handle_book(order_book, timestamp):
     if last_collected == 0:
         last_collected = now - (now % TARGET_INTERVALS_MS)
 
+    """
+    
+    Check if the current timestamp is at least TARGET_INTERVALS_MS milliseconds after the last collected timestamp. 
+    If not, skip processing to maintain the desired data collection frequency.
+    
+    """
+    
     if now < last_collected + TARGET_INTERVALS_MS:
         print(f"Skipping: now={now}, next={last_collected + TARGET_INTERVALS_MS}")
         return
 
     last_collected += TARGET_INTERVALS_MS
 
-
+    
     bids = order_book.book.bids
     asks = order_book.book.asks
     symbol = "BTC-USDT"
 
     if len(bids) < 10 or len(asks) < 10:
         return
+    
+    """
+    
+    Takes only the first 10 levels of the order book for both bids and asks, 
+    and extracts the price and size information.
+    
+    isslice takes first 10 items without loading the full dictionary into memory, 
+    which is more efficient for large order books.
+    
+    """
     
     top_10_bids = np.array([(price, bids[price]) for price in islice(bids, 10)])
     top_10_asks = np.array([(price, asks[price]) for price in islice(asks, 10)])
@@ -59,6 +88,12 @@ async def handle_book(order_book, timestamp):
     mid_price = (top_10_ask_price[0] + top_10_bid_price[0]) / 2
     spread = top_10_ask_price[0] - top_10_bid_price[0]
     imbalance = bid_depth/(bid_depth + ask_depth)
+    
+    """
+    
+    Unpack the extracted data into structed format and append to buffer.
+  
+    """
 
     buffer.append({
         'timestamp': timestamp,
@@ -72,6 +107,16 @@ async def handle_book(order_book, timestamp):
         'spread': spread,
         'imbalance': imbalance
     })
+    
+    """
+    
+    Check if the buffer has reached the defined BUFFER_SIZE. If it has, write the contents of the buffer to a Parquet file. 
+    The filename includes the batch count, symbol, and a timestamp for easy identification.
+    After writing to the file, the buffer is cleared and garbage collection is triggered to free up memory.
+    
+    Await asichronous file writing to avoid blocking the event loop, ensuring that data collection continues smoothly while the file is being written.
+  
+    """
 
     if len(buffer) >= BUFFER_SIZE:
         os.makedirs("data", exist_ok=True)

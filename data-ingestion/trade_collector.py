@@ -9,11 +9,19 @@ import os
 import time
 import gc
 
+"""
+
+BTC L2  Trade Ingestion Pipeline
+
+Event driven by nature, 
+hence we use the TRADES channel to capture real-time trade data.
+
+"""
 
 fh = FeedHandler()
 
-BUFFER_SIZE = 1000
-TARGET_INTERVALS_MS = 50
+BUFFER_SIZE = 5000
+TARGET_INTERVALS_MS = 10
 buffer = []
 batch_count = 1
 
@@ -31,7 +39,16 @@ async def handle_trade(trade, timestamp):
         'price': trade.price,
         'amount': trade.amount
     })
-
+    """
+    
+    Check if the buffer has reached the defined BUFFER_SIZE. If it has, write the contents of the buffer to a Parquet file. 
+    The filename includes the batch count, symbol, and a timestamp for easy identification.
+    After writing to the file, the buffer is cleared and garbage collection is triggered to free up memory.
+    
+    Await asichronous file writing to avoid blocking the event loop, ensuring that data collection continues smoothly while the file is being written.
+  
+    """
+    
     if len(buffer) >= BUFFER_SIZE:
         os.makedirs("data-trades", exist_ok=True)
         df = pd.DataFrame(buffer)
